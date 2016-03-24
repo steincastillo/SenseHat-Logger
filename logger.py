@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.5
+#Version 1.6
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -185,7 +185,7 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.5                *")
+    print("*           Version: 1.6                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
@@ -223,6 +223,9 @@ while tot_samples < SAMPLES:
 
 f.close()
 
-print ("Process complete!")
-print ("Total samples: " + SAMPLES)
+if DISPLAY:
+    print ("Process complete!")
+    print ("Creating file: "+filename)
+    print ("Total samples: " + SAMPLES)
+
 sense.clear()
