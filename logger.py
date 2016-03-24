@@ -224,4 +224,5 @@ while tot_samples < SAMPLES:
 f.close()
 
 print ("Process complete!")
+print ("Total samples: " + SAMPLES)
 sense.clear()
