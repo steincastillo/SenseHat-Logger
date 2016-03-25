@@ -21,18 +21,21 @@ import os
 
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
-DELAY = 60
-SAMPLES = 60
+
+DELAY = 1
+SAMPLES = 10
+
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
+TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 DISPLAY = True
 
 TEMP_H = True
 TEMP_P = True
 HUMIDITY = True
-PRESSURE = True
+PRESSURE = False
 ORIENTATION = False
 ACCELERATION = False
-MAG = True
+MAG = False
 GYRO = False
 
 #define sensor hat display colors
@@ -158,7 +161,9 @@ def get_sense_data():
         gyro_z = round(gyro_z,2)
         sense_data.extend([gyro_x, gyro_y, gyro_z])
 
-    sense_data.append(datetime.now())
+    time_stamp = datetime.now()
+    time_stamp = datetime.strftime(time_stamp, TIME_FORMAT)
+    sense_data.append(time_stamp)
     return sense_data
 
 #################
