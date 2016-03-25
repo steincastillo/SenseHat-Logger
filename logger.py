@@ -22,13 +22,14 @@ import os
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
 
-DELAY = 1
-SAMPLES = 10
+DELAY = 1       #Delay between samples
+SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
-DISPLAY = True
+DISPLAY = True  #Raspberry pi connected to a display?
 
+#Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
 HUMIDITY = True
@@ -80,6 +81,7 @@ def blinking_led():
         sleep(1)
     sense.clear()
 
+#This functions sets the .CSV file header
 def file_setup(filename):
     header = []
     if TEMP_H:
@@ -104,7 +106,7 @@ def file_setup(filename):
         f.write(",".join(str(value) for value in header) + "\n")
         
 
-#This function reads all the SenseHat sensors
+#This function reads the SenseHat sensors
 def get_sense_data():
 
     sense_data = []
@@ -129,7 +131,7 @@ def get_sense_data():
     if PRESSURE:
         sense_data.append(round(sense.get_pressure(),1))
 
-    #Read orientation data
+    #Log orientation data
     if ORIENTATION:
         yaw,pitch,roll = sense.get_orientation().values()
         yaw = round(yaw,2)
@@ -137,7 +139,7 @@ def get_sense_data():
         roll = round(roll,2)
         sense_data.extend([pitch, roll, yaw])
 
-    #Read compass data
+    #Log compass data
     if MAG:
         mag_x,mag_y,mag_z = sense.get_compass_raw().values()
         mag_x = round(mag_x,2)
@@ -145,7 +147,7 @@ def get_sense_data():
         mag_z = round(mag_z,2)
         sense_data.extend([mag_x, mag_y, mag_z])
 
-    #Read accelerometer data
+    #Log accelerometer data
     if ACCELERATION:
         x,y,z = sense.get_accelerometer_raw().values()
         x = round(x,2)
@@ -153,7 +155,7 @@ def get_sense_data():
         z = round(z,2)
         sense_data.extend ([x, y, z])
         
-    #Read gyroscope data
+    #Log gyroscope data
     if GYRO:
         gyro_x,gyro_y,gyro_z = sense.get_gyroscope_raw().values()
         gyro_x = round(gyro_x,2)
@@ -161,10 +163,12 @@ def get_sense_data():
         gyro_z = round(gyro_z,2)
         sense_data.extend([gyro_x, gyro_y, gyro_z])
 
+    #Log the time stamp
     time_stamp = datetime.now()
     time_stamp = datetime.strftime(time_stamp, TIME_FORMAT)
     sense_data.append(time_stamp)
     return sense_data
+
 
 #################
 ### Main Loop ###
