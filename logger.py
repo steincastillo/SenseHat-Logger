@@ -21,8 +21,8 @@ import os
 
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
-DELAY = 120
-SAMPLES = 260
+DELAY = 60
+SAMPLES = 60
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 DISPLAY = True
 
@@ -224,8 +224,9 @@ while tot_samples < SAMPLES:
 f.close()
 
 if DISPLAY:
+    print ("*****************")
     print ("Process complete!")
-    print ("Creating file: "+filename)
-    print ("Total samples: " + SAMPLES)
+    print ("Created file: "+filename)
+    print ("Total samples: " + str(SAMPLES))
 
 sense.clear()
