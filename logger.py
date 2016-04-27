@@ -22,7 +22,7 @@ import os
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
 
-DELAY = 1       #Delay between samples
+DELAY = 5       #Delay between samples
 SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
@@ -71,6 +71,7 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
+#this functions display 2 blinking leds to indicate that logging is in progress
 def blinking_led():
     while tot_samples < SAMPLES:
         sense.set_pixel(3, 0, G)
@@ -198,8 +199,8 @@ if DISPLAY:
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
-    print("Logging Initiated!")
-    print("****************")
+    print("Sense Hat Logging Initiated!")
+    print("****************\n")
 
 Thread(target=blinking_led).start()
 
@@ -214,16 +215,17 @@ while tot_samples < SAMPLES:
         log_data()
         
     if len(batch_data) >= WRITE_FREQUENCY:
+        tot_samples += WRITE_FREQUENCY
         if DISPLAY:
             print("Writing to file...")
             for line in batch_data:
                 print(line)
             #calculate sampling progress
-            tot_samples += WRITE_FREQUENCY
             progress = int((tot_samples/SAMPLES)*100)
             progress = str(progress)
             #sense.show_letter(progress[0])
             print("Sampling progress: "+progress+"%")
+            print ("\n")
         with open(filename, "a") as f:
             for line in batch_data:
                 f.write(line + "\n")
@@ -237,5 +239,6 @@ if DISPLAY:
     print ("Process complete!")
     print ("Created file: "+filename)
     print ("Total samples: " + str(SAMPLES))
+    print ("*****************")
 
-sense.clear()
+sense.clear() #clear SenseHat display
