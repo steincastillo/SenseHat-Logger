@@ -17,18 +17,18 @@ Raspberry Pi and Sense Hat (AstroPi). More info: https://www.raspberrypi.org/lea
 
 --- Configuration parameters:
 To control the behavior of the logger, go to the logging settings section. Adjust the logging parameters accordingly:
-FILENAME: (text) Name of the CSV file. date and time will be added to allow for several versions
-WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
-DELAY: (integer) Time between samples in seconds
-SAMPLES: (integer) Number of samples to take
-DATE_FORMAT: Determines the date format for the CSV file timestamp
-TIME_FORMAT: Determines the time format for the CSV file timestamp
-DISPLAY: (True/False) is the raspberry connected to a display? If true the progress will be shown in the screen
-TEMP_H: (True/False) Log temperature from humidity sensor?
-TEMP_P: (True/False) Log temperature from pressure sensor?
-HUMIDITY: (True/False) Log humidty?
-PRESSURE: (True/False) Log barometric pressure?
-ORIENTATION: (True/False) Log orientation data?
-ACCELERATION: (True/False) Log acceleration data?
-MAG: (True/False) Log magnetometer data?
-GYRO: (True/False) Log gyroscope data?
+*FILENAME: (text) Name of the CSV file. date and time will be added to allow for several versions
+*WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
+*DELAY: (integer) Time between samples in seconds
+*SAMPLES: (integer) Number of samples to take
+*DATE_FORMAT: Determines the date format for the CSV file timestamp
+*TIME_FORMAT: Determines the time format for the CSV file timestamp
+*DISPLAY: (True/False) is the raspberry connected to a display? If true the progress will be shown in the screen
+*TEMP_H: (True/False) Log temperature from humidity sensor?
+*TEMP_P: (True/False) Log temperature from pressure sensor?
+*HUMIDITY: (True/False) Log humidty?
+*PRESSURE: (True/False) Log barometric pressure?
+*ORIENTATION: (True/False) Log orientation data?
+*ACCELERATION: (True/False) Log acceleration data?
+*MAG: (True/False) Log magnetometer data?
+*GYRO: (True/False) Log gyroscope data?
