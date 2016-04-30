@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.6
+#Version 1.7
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -13,6 +13,7 @@ from datetime import datetime
 from time import sleep
 from threading import Thread
 import os
+import smtplib
 
 
 ########################
@@ -28,6 +29,7 @@ SAMPLES = 10    #Number of samples to take
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 DISPLAY = True  #Raspberry pi connected to a display?
+EMAIL = True #Send email when the process is finished?
 
 #Set sensors to read/log
 TEMP_H = True
@@ -38,6 +40,12 @@ ORIENTATION = False
 ACCELERATION = False
 MAG = False
 GYRO = False
+
+#set emailing parameters
+smtpUser = "email_account"  #email account
+smtpPass = "email_password"                 #email password
+fromAdd = smtpUser
+toAdd = "stein@americamail.com"             #email recipient
 
 #define sensor hat display colors
 R = [255, 0, 0]     #red
@@ -195,7 +203,7 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.6                *")
+    print("*           Version: 1.7                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
@@ -233,6 +241,26 @@ while tot_samples < SAMPLES:
             f.flush()
 
 f.close()
+sense.clear() #clear SenseHat display
+
+if EMAIL:
+    if DISPLAY:
+        print ("Sendig email...")
+    email = smtplib.SMTP("smtp.gmail.com", 587)
+    timestamp = datetime.now()
+    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
+    mailsubject= "Sampling process completed!"
+    mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
+               "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
+               str(DELAY) + " seconds"
+    header = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
+    email.ehlo()
+    email.starttls()
+    email.ehlo()
+    email.login(smtpUser, smtpPass)
+    email.sendmail(fromAdd, toAdd, header + "\n\n" + mailbody)
+    email.quit()
+
 
 if DISPLAY:
     print ("*****************")
@@ -241,4 +269,4 @@ if DISPLAY:
     print ("Total samples: " + str(SAMPLES))
     print ("*****************")
 
-sense.clear() #clear SenseHat display
+
