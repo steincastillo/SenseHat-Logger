@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.5
+#Version 1.7
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -13,6 +13,7 @@ from datetime import datetime
 from time import sleep
 from threading import Thread
 import os
+import smtplib
 
 
 ########################
@@ -21,19 +22,30 @@ import os
 
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
-DELAY = 120
-SAMPLES = 260
-DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
-DISPLAY = True
 
+DELAY = 5       #Delay between samples
+SAMPLES = 10    #Number of samples to take
+
+DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
+TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
+DISPLAY = True  #Raspberry pi connected to a display?
+EMAIL = True #Send email when the process is finished?
+
+#Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
 HUMIDITY = True
-PRESSURE = True
+PRESSURE = False
 ORIENTATION = False
 ACCELERATION = False
-MAG = True
+MAG = False
 GYRO = False
+
+#set emailing parameters
+smtpUser = "email_account"  #email account
+smtpPass = "email_password"                 #email password
+fromAdd = smtpUser
+toAdd = "stein@americamail.com"             #email recipient
 
 #define sensor hat display colors
 R = [255, 0, 0]     #red
@@ -67,6 +79,7 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
+#this functions display 2 blinking leds to indicate that logging is in progress
 def blinking_led():
     while tot_samples < SAMPLES:
         sense.set_pixel(3, 0, G)
@@ -77,6 +90,7 @@ def blinking_led():
         sleep(1)
     sense.clear()
 
+#This functions sets the .CSV file header
 def file_setup(filename):
     header = []
     if TEMP_H:
@@ -101,7 +115,7 @@ def file_setup(filename):
         f.write(",".join(str(value) for value in header) + "\n")
         
 
-#This function reads all the SenseHat sensors
+#This function reads the SenseHat sensors
 def get_sense_data():
 
     sense_data = []
@@ -126,7 +140,7 @@ def get_sense_data():
     if PRESSURE:
         sense_data.append(round(sense.get_pressure(),1))
 
-    #Read orientation data
+    #Log orientation data
     if ORIENTATION:
         yaw,pitch,roll = sense.get_orientation().values()
         yaw = round(yaw,2)
@@ -134,7 +148,7 @@ def get_sense_data():
         roll = round(roll,2)
         sense_data.extend([pitch, roll, yaw])
 
-    #Read compass data
+    #Log compass data
     if MAG:
         mag_x,mag_y,mag_z = sense.get_compass_raw().values()
         mag_x = round(mag_x,2)
@@ -142,7 +156,7 @@ def get_sense_data():
         mag_z = round(mag_z,2)
         sense_data.extend([mag_x, mag_y, mag_z])
 
-    #Read accelerometer data
+    #Log accelerometer data
     if ACCELERATION:
         x,y,z = sense.get_accelerometer_raw().values()
         x = round(x,2)
@@ -150,7 +164,7 @@ def get_sense_data():
         z = round(z,2)
         sense_data.extend ([x, y, z])
         
-    #Read gyroscope data
+    #Log gyroscope data
     if GYRO:
         gyro_x,gyro_y,gyro_z = sense.get_gyroscope_raw().values()
         gyro_x = round(gyro_x,2)
@@ -158,8 +172,12 @@ def get_sense_data():
         gyro_z = round(gyro_z,2)
         sense_data.extend([gyro_x, gyro_y, gyro_z])
 
-    sense_data.append(datetime.now())
+    #Log the time stamp
+    time_stamp = datetime.now()
+    time_stamp = datetime.strftime(time_stamp, TIME_FORMAT)
+    sense_data.append(time_stamp)
     return sense_data
+
 
 #################
 ### Main Loop ###
@@ -185,12 +203,12 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.5                *")
+    print("*           Version: 1.7                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
-    print("Logging Initiated!")
-    print("****************")
+    print("Sense Hat Logging Initiated!")
+    print("****************\n")
 
 Thread(target=blinking_led).start()
 
@@ -205,16 +223,17 @@ while tot_samples < SAMPLES:
         log_data()
         
     if len(batch_data) >= WRITE_FREQUENCY:
+        tot_samples += WRITE_FREQUENCY
         if DISPLAY:
             print("Writing to file...")
             for line in batch_data:
                 print(line)
             #calculate sampling progress
-            tot_samples += WRITE_FREQUENCY
             progress = int((tot_samples/SAMPLES)*100)
             progress = str(progress)
             #sense.show_letter(progress[0])
             print("Sampling progress: "+progress+"%")
+            print ("\n")
         with open(filename, "a") as f:
             for line in batch_data:
                 f.write(line + "\n")
@@ -222,7 +241,32 @@ while tot_samples < SAMPLES:
             f.flush()
 
 f.close()
+sense.clear() #clear SenseHat display
 
-print ("Process complete!")
-print ("Total samples: " + SAMPLES)
-sense.clear()
+if EMAIL:
+    if DISPLAY:
+        print ("Sendig email...")
+    email = smtplib.SMTP("smtp.gmail.com", 587)
+    timestamp = datetime.now()
+    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
+    mailsubject= "Sampling process completed!"
+    mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
+               "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
+               str(DELAY) + " seconds"
+    header = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
+    email.ehlo()
+    email.starttls()
+    email.ehlo()
+    email.login(smtpUser, smtpPass)
+    email.sendmail(fromAdd, toAdd, header + "\n\n" + mailbody)
+    email.quit()
+
+
+if DISPLAY:
+    print ("*****************")
+    print ("Process complete!")
+    print ("Created file: "+filename)
+    print ("Total samples: " + str(SAMPLES))
+    print ("*****************")
+
+
