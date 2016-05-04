@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.7
+#Version 1.7a
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
