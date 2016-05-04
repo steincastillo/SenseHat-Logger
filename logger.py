@@ -29,7 +29,7 @@ SAMPLES = 10    #Number of samples to take
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = True #Send email when the process is finished?
+EMAIL = False #Send email when the process is finished?
 
 #Set sensors to read/log
 TEMP_H = True
@@ -69,6 +69,15 @@ def log_data():
 def timed_log():
     while True:
         log_data()
+        #display temperature on the hat
+        cpu = cpu_temp()
+        temp = sense.get_temperature_from_humidity()
+        temp = temp-(cpu-temp)
+        temp = round(temp,1)
+        temp_int = int(temp)
+        temp_dis = str(temp_int)
+        temp_num_matrix_1(temp_dis[0])
+        temp_num_matrix_2(temp_dis[1])
         sleep(DELAY)
 
 #this functions display 2 blinking leds to indicate that logging is in progress
@@ -119,11 +128,7 @@ def get_sense_data():
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
-        #display temperature on the hat
-        temp_int = int(temp)
-        temp_dis = str(temp_int)
-        temp_num_matrix_1(temp_dis[0])
-        temp_num_matrix_2(temp_dis[1])
+        
         
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
@@ -600,11 +605,11 @@ if DISPLAY:
     print("Sense Hat Logging Initiated!")
     print("****************\n")
 
-Thread(target=blinking_led).start()
+#Thread(target=blinking_led).start()
 
 if DELAY > 0:
     sense_data = get_sense_data()
-    #Thread(target=timed_log).start()
+    Thread(target=timed_log).start()
 
 while tot_samples < SAMPLES:
     #print("reading sensors")
