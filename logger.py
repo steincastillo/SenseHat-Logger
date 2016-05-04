@@ -19,13 +19,27 @@ import os
 ### Logging Settings ###
 ########################
 
-FILENAME = "senselog"
+FILENAME = "studio"
 WRITE_FREQUENCY = 5
+<<<<<<< master
 DELAY = 120
 SAMPLES = 260
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 DISPLAY = True
 
+=======
+
+DELAY = 60      #Delay between samples in seconds
+SAMPLES =  10   #Number of samples to take
+
+DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
+TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
+DISPLAY = True  #Raspberry pi connected to a display?
+EMAIL = False #Send email when the process is finished?
+
+#Set sensors to read/log
+TEMP_A = True
+>>>>>>> local
 TEMP_H = True
 TEMP_P = True
 HUMIDITY = True
@@ -35,6 +49,15 @@ ACCELERATION = False
 MAG = True
 GYRO = False
 
+<<<<<<< master
+=======
+#set emailing parameters
+smtpUser = "email"  #email account
+smtpPass = "password"                 #email password
+fromAdd = smtpUser
+toAdd = "recipient"             #email recipient
+
+>>>>>>> local
 #define sensor hat display colors
 R = [255, 0, 0]     #red
 O = [255, 127, 0]   #orange
@@ -116,7 +139,7 @@ def get_sense_data():
         
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
-        temp = temp-(cpu-temp)
+        temp = temp-((cpu-temp)/1.5)
         temp = round(temp,1)
         sense_data.append(temp)
 
@@ -222,6 +245,41 @@ while tot_samples < SAMPLES:
             f.flush()
 
 f.close()
+<<<<<<< master
+=======
+sense.clear() #clear SenseHat display
+
+#set process complete flag
+flag = open("flag", "w")
+flag.close()
+
+if EMAIL:
+    if DISPLAY:
+        print ("Sendig email...")
+    email = smtplib.SMTP("smtp.gmail.com", 587)
+    timestamp = datetime.now()
+    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
+    mailsubject= "Sampling process completed!"
+    mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
+               "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
+               str(DELAY) + " seconds"
+    header = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
+    email.ehlo()
+    email.starttls()
+    email.ehlo()
+    email.login(smtpUser, smtpPass)
+    email.sendmail(fromAdd, toAdd, header + "\n\n" + mailbody)
+    email.quit()
+
+
+if DISPLAY:
+    print ("*****************")
+    print ("Process complete!")
+    print ("Created file: "+filename)
+    print ("Total samples: " + str(SAMPLES))
+    print ("*****************")
+
+>>>>>>> local
 
 print ("Process complete!")
 print ("Total samples: " + SAMPLES)
