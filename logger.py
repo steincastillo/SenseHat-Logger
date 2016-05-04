@@ -34,7 +34,7 @@ EMAIL = True #Send email when the process is finished?
 #Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
-HUMIDITY = True
+HUMIDITY = False
 PRESSURE = False
 ORIENTATION = False
 ACCELERATION = False
@@ -119,6 +119,11 @@ def get_sense_data():
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
+        #display temperature on the hat
+        temp_int = int(temp)
+        temp_dis = str(temp_int)
+        temp_num_matrix_1(temp_dis[0])
+        temp_num_matrix_2(temp_dis[1])
         
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
@@ -599,7 +604,7 @@ Thread(target=blinking_led).start()
 
 if DELAY > 0:
     sense_data = get_sense_data()
-    Thread(target=timed_log).start()
+    #Thread(target=timed_log).start()
 
 while tot_samples < SAMPLES:
     #print("reading sensors")
