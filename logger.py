@@ -69,6 +69,11 @@ def log_data():
 def timed_log():
     while True:
         log_data()
+        sleep(DELAY)
+
+#this functions display 2 blinking leds to indicate that logging is in progress
+def blinking_led():
+    while tot_samples < SAMPLES:
         #display temperature on the hat
         cpu = cpu_temp()
         temp = sense.get_temperature_from_humidity()
@@ -78,17 +83,12 @@ def timed_log():
         temp_dis = str(temp_int)
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
+        # sense.set_pixel(3, 0, G)
+        # sense.set_pixel(4, 0, G)
+        # sleep(1)
+        # sense.set_pixel(3, 0, E)
+        # sense.set_pixel(4, 0, E)
         sleep(DELAY)
-
-#this functions display 2 blinking leds to indicate that logging is in progress
-def blinking_led():
-    while tot_samples < SAMPLES:
-        sense.set_pixel(3, 0, G)
-        sense.set_pixel(4, 0, G)
-        sleep(1)
-        sense.set_pixel(3, 0, E)
-        sense.set_pixel(4, 0, E)
-        sleep(1)
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -605,7 +605,7 @@ if DISPLAY:
     print("Sense Hat Logging Initiated!")
     print("****************\n")
 
-#Thread(target=blinking_led).start()
+Thread(target=blinking_led).start()
 
 if DELAY > 0:
     sense_data = get_sense_data()
