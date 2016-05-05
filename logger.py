@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.7
+#Version 1.9
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -23,7 +23,7 @@ import smtplib
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
 
-DELAY = 2       #Delay between samples
+DELAY = 2       #Delay between samples in seconds
 SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
@@ -34,8 +34,8 @@ EMAIL = False #Send email when the process is finished?
 #Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
-HUMIDITY = False
-PRESSURE = False
+HUMIDITY = True
+PRESSURE = True
 ORIENTATION = False
 ACCELERATION = False
 MAG = False
@@ -45,7 +45,7 @@ GYRO = False
 smtpUser = "email_account"  #email account
 smtpPass = "email_password"                 #email password
 fromAdd = smtpUser
-toAdd = "stein@americamail.com"             #email recipient
+toAdd = "mail_recepient"             #email recipient
 
 led_level = 255
 
@@ -71,7 +71,7 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
-#this functions display 2 blinking leds to indicate that logging is in progress
+#this functions display 2 digit temperature reading on the hat display (upper section)
 def blinking_led():
     while tot_samples < SAMPLES:
         #display temperature on the hat
@@ -83,12 +83,12 @@ def blinking_led():
         temp_dis = str(temp_int)
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
+        sleep(DELAY)
         # sense.set_pixel(3, 0, G)
         # sense.set_pixel(4, 0, G)
         # sleep(1)
         # sense.set_pixel(3, 0, E)
         # sense.set_pixel(4, 0, E)
-        sleep(DELAY)
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -598,7 +598,7 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.7                *")
+    print("*           Version: 1.9                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
