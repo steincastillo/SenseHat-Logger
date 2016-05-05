@@ -23,7 +23,7 @@ import smtplib
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
 
-DELAY = 5       #Delay between samples
+DELAY = 2       #Delay between samples
 SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
