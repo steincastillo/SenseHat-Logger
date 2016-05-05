@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.7
+#Version 1.9
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -23,19 +23,19 @@ import smtplib
 FILENAME = "senselog"
 WRITE_FREQUENCY = 5
 
-DELAY = 5       #Delay between samples
+DELAY = 2       #Delay between samples in seconds
 SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = True #Send email when the process is finished?
+EMAIL = False #Send email when the process is finished?
 
 #Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
 HUMIDITY = True
-PRESSURE = False
+PRESSURE = True
 ORIENTATION = False
 ACCELERATION = False
 MAG = False
@@ -45,17 +45,9 @@ GYRO = False
 smtpUser = "email_account"  #email account
 smtpPass = "email_password"                 #email password
 fromAdd = smtpUser
-toAdd = "stein@americamail.com"             #email recipient
+toAdd = "mail_recepient"             #email recipient
 
-#define sensor hat display colors
-R = [255, 0, 0]     #red
-O = [255, 127, 0]   #orange
-Y = [255, 255, 0]   #yellow
-G = [0, 255, 0]     #green
-B = [0, 0, 255]     #black
-I = [75, 0, 130]    #pink
-V = [159, 0, 255]   #violet
-E = [0, 0, 0]       #empty/black
+led_level = 255
 
 #################
 ### Functions ###
@@ -79,15 +71,24 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
-#this functions display 2 blinking leds to indicate that logging is in progress
+#this functions display 2 digit temperature reading on the hat display (upper section)
 def blinking_led():
     while tot_samples < SAMPLES:
-        sense.set_pixel(3, 0, G)
-        sense.set_pixel(4, 0, G)
-        sleep(1)
-        sense.set_pixel(3, 0, E)
-        sense.set_pixel(4, 0, E)
-        sleep(1)
+        #display temperature on the hat
+        cpu = cpu_temp()
+        temp = sense.get_temperature_from_humidity()
+        temp = temp-(cpu-temp)
+        temp = round(temp,1)
+        temp_int = int(temp)
+        temp_dis = str(temp_int)
+        temp_num_matrix_1(temp_dis[0])
+        temp_num_matrix_2(temp_dis[1])
+        sleep(DELAY)
+        # sense.set_pixel(3, 0, G)
+        # sense.set_pixel(4, 0, G)
+        # sleep(1)
+        # sense.set_pixel(3, 0, E)
+        # sense.set_pixel(4, 0, E)
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -127,6 +128,7 @@ def get_sense_data():
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
+        
         
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
@@ -178,6 +180,399 @@ def get_sense_data():
     sense_data.append(time_stamp)
     return sense_data
 
+#define sensor hat display colors
+R = [255, 0, 0]     #red
+O = [255, 127, 0]   #orange
+Y = [255, 255, 0]   #yellow
+G = [0, 255, 0]     #green
+B = [0, 0, 255]     #black
+I = [75, 0, 130]    #pink
+V = [159, 0, 255]   #violet
+E = [0, 0, 0]       #empty/black
+
+def temp_num_matrix_1(num):
+
+  if num == '0':
+        # number 0_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, led_level, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, 0, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '1':
+        # number 1_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, 0, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, 0, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, led_level, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, 0, 0, 0)   
+    sense.set_pixel(2, 1, 0, 0, 0)   
+    sense.set_pixel(2, 2, 0, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '2':
+        # number 2_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, 0, 0, 0)   
+    sense.set_pixel(0, 2, 0, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, 0, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '3':
+        # number 3_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, 0, 0, 0)   
+    sense.set_pixel(0, 2, 0, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, led_level, 0, 0)   
+    sense.set_pixel(1, 2, 0, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '4':
+        # number 4_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, led_level, 0, 0)   
+    sense.set_pixel(0, 3, 0, 0, 0)
+    sense.set_pixel(1, 0, 0, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, 0, 0, 0)
+    sense.set_pixel(2, 0, 0, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '5':
+        # number 5_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, 0, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, 0, 0, 0)   
+    sense.set_pixel(2, 2, 0, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '6':
+        # number 6_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, led_level, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, 0, 0, 0)   
+    sense.set_pixel(1, 1, led_level, 0, 0)   
+    sense.set_pixel(1, 2, 0, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, 0, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '7':
+        # number 7_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, 0, 0, 0)   
+    sense.set_pixel(0, 3, 0, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, 0, 0, 0)   
+    sense.set_pixel(1, 3, 0, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+  
+  if num == '8':
+        # number 8_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, led_level, 0, 0)   
+    sense.set_pixel(0, 3, led_level, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, led_level, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+  if num == '9':
+        # number 9_top_left - TEMPERATURE
+    sense.set_pixel(0, 0, led_level, 0, 0)   
+    sense.set_pixel(0, 1, led_level, 0, 0)   
+    sense.set_pixel(0, 2, led_level, 0, 0)   
+    sense.set_pixel(0, 3, 0, 0, 0)
+    sense.set_pixel(1, 0, led_level, 0, 0)   
+    sense.set_pixel(1, 1, 0, 0, 0)   
+    sense.set_pixel(1, 2, led_level, 0, 0)   
+    sense.set_pixel(1, 3, 0, 0, 0)
+    sense.set_pixel(2, 0, led_level, 0, 0)   
+    sense.set_pixel(2, 1, led_level, 0, 0)   
+    sense.set_pixel(2, 2, led_level, 0, 0)   
+    sense.set_pixel(2, 3, led_level, 0, 0)
+    sense.set_pixel(3, 0, 0, 0, 0)   
+    sense.set_pixel(3, 1, 0, 0, 0)   
+    sense.set_pixel(3, 2, 0, 0, 0)   
+    sense.set_pixel(3, 3, 0, 0, 0)
+
+def temp_num_matrix_2(num):
+    
+  if num == '0':
+        # number 0_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, led_level, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, 0, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '1':
+        # number 1_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, 0, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, 0, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, led_level, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, 0, 0, 0)   
+    sense.set_pixel(6, 1, 0, 0, 0)   
+    sense.set_pixel(6, 2, 0, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '2':
+        # number 2_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, 0, 0, 0)   
+    sense.set_pixel(4, 2, 0, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, 0, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '3':
+        # number 3_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, 0, 0, 0)   
+    sense.set_pixel(4, 2, 0, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, led_level, 0, 0)   
+    sense.set_pixel(5, 2, 0, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '4':
+        # number 4_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, led_level, 0, 0)   
+    sense.set_pixel(4, 3, 0, 0, 0)
+    sense.set_pixel(5, 0, 0, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)   
+    sense.set_pixel(5, 3, 0, 0, 0)
+    sense.set_pixel(6, 0, 0, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '5':
+        # number 5_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, 0, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, 0, 0, 0)   
+    sense.set_pixel(6, 2, 0, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '6':
+        # number 6_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, led_level, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, 0, 0, 0)   
+    sense.set_pixel(5, 1, led_level, 0, 0)   
+    sense.set_pixel(5, 2, 0, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, 0, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '7':
+        # number 7_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, 0, 0, 0)   
+    sense.set_pixel(4, 3, 0, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, 0, 0, 0)   
+    sense.set_pixel(5, 3, 0, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '8':
+        # number 8_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, led_level, 0, 0)   
+    sense.set_pixel(4, 3, led_level, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)   
+    sense.set_pixel(5, 3, led_level, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
+
+  if num == '9':
+        # number 9_top_right - TEMPERATURE
+    sense.set_pixel(4, 0, led_level, 0, 0)   
+    sense.set_pixel(4, 1, led_level, 0, 0)   
+    sense.set_pixel(4, 2, led_level, 0, 0)   
+    sense.set_pixel(4, 3, 0, 0, 0)
+    sense.set_pixel(5, 0, led_level, 0, 0)   
+    sense.set_pixel(5, 1, 0, 0, 0)   
+    sense.set_pixel(5, 2, led_level, 0, 0)
+    sense.set_pixel(5, 3, 0, 0, 0)
+    sense.set_pixel(6, 0, led_level, 0, 0)   
+    sense.set_pixel(6, 1, led_level, 0, 0)   
+    sense.set_pixel(6, 2, led_level, 0, 0)   
+    sense.set_pixel(6, 3, led_level, 0, 0)
+    sense.set_pixel(7, 0, 0, 0, 0)   
+    sense.set_pixel(7, 1, 0, 0, 0)   
+    sense.set_pixel(7, 2, 0, 0, 0)   
+    sense.set_pixel(7, 3, 0, 0, 0)
 
 #################
 ### Main Loop ###
@@ -203,7 +598,7 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.7                *")
+    print("*           Version: 1.9                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
