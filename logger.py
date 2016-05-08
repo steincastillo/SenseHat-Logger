@@ -20,7 +20,7 @@ import smtplib
 ### Logging Settings ###
 ########################
 
-FILENAME = "senselog"
+FILENAME = "test"
 WRITE_FREQUENCY = 5
 
 DELAY = 2       #Delay between samples in seconds
@@ -29,7 +29,7 @@ SAMPLES = 10    #Number of samples to take
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = False #Send email when the process is finished?
+EMAIL = False #Send email when the process is complete?
 
 #Set sensors to read/log
 TEMP_H = True
@@ -71,12 +71,15 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
-#this functions display 2 digit temperature reading on the hat display (upper section)
-def blinking_led():
+#this function displays 2 digit temperature reading on the hat display (upper section)
+def display_temp():
     while tot_samples < SAMPLES:
         #display temperature on the hat
         cpu = cpu_temp()
-        temp = sense.get_temperature_from_humidity()
+        temp1 = sense.get_temperature_from_humidity()
+        temp2 = sense.get_temperature_from_pressure()
+        temp3 = sense.get_temperature()
+        temp = (temp1+temp2+temp3)/3
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         temp_int = int(temp)
@@ -120,7 +123,6 @@ def file_setup(filename):
 def get_sense_data():
 
     sense_data = []
-
     cpu = cpu_temp()
 
     if TEMP_H:
@@ -128,8 +130,7 @@ def get_sense_data():
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
-        
-        
+             
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
         temp = temp-(cpu-temp)
@@ -582,7 +583,6 @@ sense = SenseHat()
 batch_data = []
 tot_samples = 0
 
-
 #Set the logging file name
 time = datetime.now()
 time = datetime.strftime(time, DATE_FORMAT)
@@ -605,7 +605,7 @@ if DISPLAY:
     print("Sense Hat Logging Initiated!")
     print("****************\n")
 
-Thread(target=blinking_led).start()
+Thread(target=display_temp).start()
 
 if DELAY > 0:
     sense_data = get_sense_data()
