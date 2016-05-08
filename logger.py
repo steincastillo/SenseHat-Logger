@@ -76,11 +76,15 @@ def display_temp():
     while tot_samples < SAMPLES:
         #display temperature on the hat
         cpu = cpu_temp()
+        
+        #calculation to correct for the CPU temperature effect on temperature sensors
+        #verified against a standalone temperature gauge for raspberry B+
         temp1 = sense.get_temperature_from_humidity()
         temp2 = sense.get_temperature_from_pressure()
         temp3 = sense.get_temperature()
         temp = (temp1+temp2+temp3)/3
-        temp = temp-(cpu-temp)
+        temp = temp-(cpu/5)
+        
         temp = round(temp,1)
         temp_int = int(temp)
         temp_dis = str(temp_int)
