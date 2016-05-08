@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.9
+#Version 2.0
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -23,8 +23,8 @@ import smtplib
 FILENAME = "test"
 WRITE_FREQUENCY = 5
 
-DELAY = 30       #Delay between samples in seconds
-SAMPLES = 30    #Number of samples to take
+DELAY = 2       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
@@ -612,7 +612,7 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.9                *")
+    print("*           Version: 2.0                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
