@@ -34,6 +34,7 @@ EMAIL = False #Send email when the process is complete?
 #Set sensors to read/log
 TEMP_H = True
 TEMP_P = True
+TEMP_R = True
 HUMIDITY = True
 PRESSURE = True
 ORIENTATION = False
@@ -105,6 +106,8 @@ def file_setup(filename):
         header.append("temp_h")
     if TEMP_P:
         header.append("temp_p")
+    if TEMP_R:
+        header.append("temp_r")
     if HUMIDITY:
         header.append("humidity")
     if PRESSURE:
@@ -138,6 +141,13 @@ def get_sense_data():
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
         temp = temp-(cpu-temp)
+        temp = round(temp,1)
+        sense_data.append(temp)
+    if TEMP_R:
+        temp1 = sense.get_temperature()
+        temp2 = sense.get_temperature_from_pressure()
+        temp3 = sense.get_temperature_from_humidity()
+        temp = ((temp1+temp2+temp3)/3)-(cpu/5)
         temp = round(temp,1)
         sense_data.append(temp)
 
