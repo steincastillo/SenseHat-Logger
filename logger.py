@@ -23,8 +23,8 @@ import smtplib
 FILENAME = "test"
 WRITE_FREQUENCY = 5
 
-DELAY = 2       #Delay between samples in seconds
-SAMPLES = 10    #Number of samples to take
+DELAY = 60       #Delay between samples in seconds
+SAMPLES = 60    #Number of samples to take
 
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
