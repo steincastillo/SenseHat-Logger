@@ -15,38 +15,50 @@ from threading import Thread
 import os
 import smtplib
 
-
 ########################
 ### Logging Settings ###
 ########################
 
-FILENAME = "test"
-WRITE_FREQUENCY = 5
-
+#Set sampling universe and rate
 DELAY = 60       #Delay between samples in seconds
 SAMPLES = 60    #Number of samples to take
 
-DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
-TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
-DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = False #Send email when the process is complete?
-
 #Set sensors to read/log
-TEMP_H = True
-TEMP_P = True
-TEMP_R = True
-HUMIDITY = True
-PRESSURE = True
+TEMP_H = True   #Temperature from humidity sensor
+TEMP_P = True   #Temperature from pressure sensor
+TEMP_R = True   #"real" temperature corrected for CPU heat effect
+HUMIDITY = True 
+PRESSURE = True 
 ORIENTATION = False
 ACCELERATION = False
 MAG = False
 GYRO = False
 
+#Set other logging parameters
+FILENAME = "test"
+WRITE_FREQUENCY = 5
+DISPLAY = True  #Raspberry pi connected to a display?
+EMAIL = False #Send email when the process is complete?
+
 #set emailing parameters
 smtpUser = "email_account"  #email account
-smtpPass = "email_password"                 #email password
+smtpPass = "email_password"          #email password
 fromAdd = smtpUser
 toAdd = "mail_recepient"             #email recipient
+
+#define sensor hat display colors
+R = [255, 0, 0]     #red
+O = [255, 127, 0]   #orange
+Y = [255, 255, 0]   #yellow
+G = [0, 255, 0]     #green
+B = [0, 0, 255]     #black
+I = [75, 0, 130]    #pink
+V = [159, 0, 255]   #violet
+E = [0, 0, 0]       #empty/black
+
+#Set date and time formats
+DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
+TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 
 led_level = 255
 
@@ -54,7 +66,7 @@ led_level = 255
 ### Functions ###
 #################
 
-#this function reads the cpu temperature
+#This function reads the cpu temperature
 def cpu_temp():
     tx = os.popen('/opt/vc/bin/vcgencmd measure_temp')
     cputemp = tx.read()
@@ -72,7 +84,7 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
-#this function displays 2 digit temperature reading on the hat display (upper section)
+#This function displays 2 digit temperature reading on the hat display (upper section)
 def display_temp():
     while tot_samples < SAMPLES:
         #display temperature on the hat
@@ -84,19 +96,15 @@ def display_temp():
         temp2 = sense.get_temperature_from_pressure()
         temp3 = sense.get_temperature()
         temp = (temp1+temp2+temp3)/3
-        temp = temp-(cpu/5)
-        
+        temp = temp-(cpu/5)        
         temp = round(temp,1)
         temp_int = int(temp)
         temp_dis = str(temp_int)
+
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
         sleep(DELAY)
-        # sense.set_pixel(3, 0, G)
-        # sense.set_pixel(4, 0, G)
-        # sleep(1)
-        # sense.set_pixel(3, 0, E)
-        # sense.set_pixel(4, 0, E)
+    
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -132,17 +140,21 @@ def get_sense_data():
     sense_data = []
     cpu = cpu_temp()
 
+    #Log temperature from humidity sensor
     if TEMP_H:
         temp = sense.get_temperature_from_humidity()
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
-             
+
+    #Log temperature from pressure sensor             
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
+
+    #Log "real" temperature corrected for CPU heat effect
     if TEMP_R:
         temp1 = sense.get_temperature()
         temp2 = sense.get_temperature_from_pressure()
@@ -151,9 +163,11 @@ def get_sense_data():
         temp = round(temp,1)
         sense_data.append(temp)
 
+    #Log humidity
     if HUMIDITY:
         sense_data.append(round(sense.get_humidity(),1))
 
+    #Log atmospheric pressure
     if PRESSURE:
         sense_data.append(round(sense.get_pressure(),1))
 
@@ -195,15 +209,6 @@ def get_sense_data():
     sense_data.append(time_stamp)
     return sense_data
 
-#define sensor hat display colors
-R = [255, 0, 0]     #red
-O = [255, 127, 0]   #orange
-Y = [255, 255, 0]   #yellow
-G = [0, 255, 0]     #green
-B = [0, 0, 255]     #black
-I = [75, 0, 130]    #pink
-V = [159, 0, 255]   #violet
-E = [0, 0, 0]       #empty/black
 
 def temp_num_matrix_1(num):
 
