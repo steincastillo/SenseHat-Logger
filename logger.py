@@ -20,8 +20,8 @@ import smtplib
 ########################
 
 #Set sampling universe and rate
-DELAY = 60       #Delay between samples in seconds
-SAMPLES = 60    #Number of samples to take
+DELAY = 10       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -38,13 +38,13 @@ GYRO = False
 FILENAME = "test"
 WRITE_FREQUENCY = 5
 DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = False #Send email when the process is complete?
+EMAIL = True #Send email when the process is complete?
 
 #set emailing parameters
-smtpUser = "email_account"  #email account
-smtpPass = "email_password"          #email password
+smtpUser = "raspberrymonitor641@gmail.com"  #email account
+smtpPass = "jebret83"          #email password
 fromAdd = smtpUser
-toAdd = "mail_recepient"             #email recipient
+toAdd = "stein@americamail.com"      #email recipient
 
 #define sensor hat display colors
 R = [255, 0, 0]     #red
@@ -209,6 +209,16 @@ def get_sense_data():
     sense_data.append(time_stamp)
     return sense_data
 
+def send_email(header, body):
+    email = smtplib.SMTP("smtp.gmail.com", 587)
+    timestamp = datetime.now()
+    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
+    email.ehlo()
+    email.starttls()
+    email.ehlo()
+    email.login(smtpUser, smtpPass)
+    email.sendmail(fromAdd, toAdd, header + "\n\n" + body)
+    email.quit()
 
 def temp_num_matrix_1(num):
 
@@ -660,20 +670,12 @@ sense.clear() #clear SenseHat display
 if EMAIL:
     if DISPLAY:
         print ("Sendig email...")
-    email = smtplib.SMTP("smtp.gmail.com", 587)
-    timestamp = datetime.now()
-    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
     mailsubject= "Sampling process completed!"
     mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
                "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
                str(DELAY) + " seconds"
-    header = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
-    email.ehlo()
-    email.starttls()
-    email.ehlo()
-    email.login(smtpUser, smtpPass)
-    email.sendmail(fromAdd, toAdd, header + "\n\n" + mailbody)
-    email.quit()
+    mailheader = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
+    send_email(mailheader, mailbody)
 
 
 if DISPLAY:
