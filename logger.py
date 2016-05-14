@@ -211,8 +211,6 @@ def get_sense_data():
 
 def send_email(header, body):
     email = smtplib.SMTP("smtp.gmail.com", 587)
-    timestamp = datetime.now()
-    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
     email.ehlo()
     email.starttls()
     email.ehlo()
@@ -670,6 +668,8 @@ sense.clear() #clear SenseHat display
 if EMAIL:
     if DISPLAY:
         print ("Sendig email...")
+    timestamp = datetime.now()
+    timestamp = datetime.strftime(timestamp, TIME_FORMAT)
     mailsubject= "Sampling process completed!"
     mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
                "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
