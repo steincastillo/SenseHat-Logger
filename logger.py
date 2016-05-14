@@ -677,7 +677,6 @@ if EMAIL:
     mailheader = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
     send_email(mailheader, mailbody)
 
-
 if DISPLAY:
     print ("*****************")
     print ("Process complete!")
