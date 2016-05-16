@@ -13,10 +13,11 @@ SenseHat-logger reads the Sense Hat sensors (temperature, barometric pressure, h
 The program gives the user control to determine which sensors to log, the sampling frecuency and the number of samples. Additionally, it can be configured to work with the raspberry pi attached or not to a display.
 
 --- What do you need? 
-Raspberry Pi and Sense Hat (AstroPi). More info: https://www.raspberrypi.org/learning/getting-started-with-the-sense-hat/
+Raspberry Pi and Sense Hat (AstroPi). 
+More info: https://www.raspberrypi.org/learning/getting-started-with-the-sense-hat/
 
 --- Configuration parameters:
-To control the behavior of the logger, go to the logging settings section. Adjust the logging parameters accordingly:
+To control the logger, go to the logging settings section. Adjust the logging parameters accordingly:
 *FILENAME: (text) Name of the CSV file. date and time will be added to allow for several versions
 *WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
 *DELAY: (integer) Time between samples in seconds
