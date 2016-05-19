@@ -20,8 +20,8 @@ import smtplib
 ########################
 
 #Set sampling universe and rate
-DELAY = 10       #Delay between samples in seconds
-SAMPLES = 10    #Number of samples to take
+DELAY = 60       #Delay between samples in seconds
+SAMPLES = 180    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
