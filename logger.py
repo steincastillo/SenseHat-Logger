@@ -21,7 +21,7 @@ import smtplib
 
 #Set sampling universe and rate
 DELAY = 60       #Delay between samples in seconds
-SAMPLES = 180    #Number of samples to take
+SAMPLES = 220    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -35,7 +35,7 @@ MAG = False
 GYRO = False
 
 #Set other logging parameters
-FILENAME = "test"
+FILENAME = "deck"
 WRITE_FREQUENCY = 5
 DISPLAY = True  #Raspberry pi connected to a display?
 EMAIL = True #Send email when the process is complete?
