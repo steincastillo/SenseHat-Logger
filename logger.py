@@ -1,6 +1,6 @@
 #Sense Hat Logger
 #Program: logger.py
-#Version 1.9
+#Version 2.0
 #Author: Stein Castillo
 #Date: Mar 19 2016
 
@@ -15,37 +15,50 @@ from threading import Thread
 import os
 import smtplib
 
-
 ########################
 ### Logging Settings ###
 ########################
 
-FILENAME = "senselog"
-WRITE_FREQUENCY = 5
-
-DELAY = 2       #Delay between samples in seconds
+#Set sampling universe and rate
+DELAY = 10       #Delay between samples in seconds
 SAMPLES = 10    #Number of samples to take
 
-DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
-TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
-DISPLAY = True  #Raspberry pi connected to a display?
-EMAIL = False #Send email when the process is finished?
-
 #Set sensors to read/log
-TEMP_H = True
-TEMP_P = True
-HUMIDITY = True
-PRESSURE = True
+TEMP_H = True   #Temperature from humidity sensor
+TEMP_P = True   #Temperature from pressure sensor
+TEMP_R = True   #"real" temperature corrected for CPU heat effect
+HUMIDITY = True 
+PRESSURE = True 
 ORIENTATION = False
 ACCELERATION = False
 MAG = False
 GYRO = False
 
+#Set other logging parameters
+FILENAME = "test"
+WRITE_FREQUENCY = 5
+DISPLAY = True  #Raspberry pi connected to a display?
+EMAIL = True #Send email when the process is complete?
+
 #set emailing parameters
-smtpUser = "email_account"  #email account
-smtpPass = "email_password"                 #email password
+smtpUser = "raspberrymonitor641@gmail.com"  #email account
+smtpPass = "jebret83"          #email password
 fromAdd = smtpUser
-toAdd = "mail_recepient"             #email recipient
+toAdd = "stein@americamail.com"      #email recipient
+
+#define sensor hat display colors
+R = [255, 0, 0]     #red
+O = [255, 127, 0]   #orange
+Y = [255, 255, 0]   #yellow
+G = [0, 255, 0]     #green
+B = [0, 0, 255]     #black
+I = [75, 0, 130]    #pink
+V = [159, 0, 255]   #violet
+E = [0, 0, 0]       #empty/black
+
+#Set date and time formats
+DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
+TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 
 led_level = 255
 
@@ -53,7 +66,7 @@ led_level = 255
 ### Functions ###
 #################
 
-#this function reads the cpu temperature
+#This function reads the cpu temperature
 def cpu_temp():
     tx = os.popen('/opt/vc/bin/vcgencmd measure_temp')
     cputemp = tx.read()
@@ -71,24 +84,27 @@ def timed_log():
         log_data()
         sleep(DELAY)
 
-#this functions display 2 digit temperature reading on the hat display (upper section)
-def blinking_led():
+#This function displays 2 digit temperature reading on the hat display (upper section)
+def display_temp():
     while tot_samples < SAMPLES:
         #display temperature on the hat
         cpu = cpu_temp()
-        temp = sense.get_temperature_from_humidity()
-        temp = temp-(cpu-temp)
+        
+        #calculation to correct for the CPU temperature effect on temperature sensors
+        #verified against a standalone temperature gauge for raspberry B+
+        temp1 = sense.get_temperature_from_humidity()
+        temp2 = sense.get_temperature_from_pressure()
+        temp3 = sense.get_temperature()
+        temp = (temp1+temp2+temp3)/3
+        temp = temp-(cpu/5)        
         temp = round(temp,1)
         temp_int = int(temp)
         temp_dis = str(temp_int)
+
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
         sleep(DELAY)
-        # sense.set_pixel(3, 0, G)
-        # sense.set_pixel(4, 0, G)
-        # sleep(1)
-        # sense.set_pixel(3, 0, E)
-        # sense.set_pixel(4, 0, E)
+    
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -98,6 +114,8 @@ def file_setup(filename):
         header.append("temp_h")
     if TEMP_P:
         header.append("temp_p")
+    if TEMP_R:
+        header.append("temp_r")
     if HUMIDITY:
         header.append("humidity")
     if PRESSURE:
@@ -120,25 +138,36 @@ def file_setup(filename):
 def get_sense_data():
 
     sense_data = []
-
     cpu = cpu_temp()
 
+    #Log temperature from humidity sensor
     if TEMP_H:
         temp = sense.get_temperature_from_humidity()
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
-        
-        
+
+    #Log temperature from pressure sensor             
     if TEMP_P:
         temp = sense.get_temperature_from_pressure()
         temp = temp-(cpu-temp)
         temp = round(temp,1)
         sense_data.append(temp)
 
+    #Log "real" temperature corrected for CPU heat effect
+    if TEMP_R:
+        temp1 = sense.get_temperature()
+        temp2 = sense.get_temperature_from_pressure()
+        temp3 = sense.get_temperature_from_humidity()
+        temp = ((temp1+temp2+temp3)/3)-(cpu/5)
+        temp = round(temp,1)
+        sense_data.append(temp)
+
+    #Log humidity
     if HUMIDITY:
         sense_data.append(round(sense.get_humidity(),1))
 
+    #Log atmospheric pressure
     if PRESSURE:
         sense_data.append(round(sense.get_pressure(),1))
 
@@ -180,15 +209,14 @@ def get_sense_data():
     sense_data.append(time_stamp)
     return sense_data
 
-#define sensor hat display colors
-R = [255, 0, 0]     #red
-O = [255, 127, 0]   #orange
-Y = [255, 255, 0]   #yellow
-G = [0, 255, 0]     #green
-B = [0, 0, 255]     #black
-I = [75, 0, 130]    #pink
-V = [159, 0, 255]   #violet
-E = [0, 0, 0]       #empty/black
+def send_email(header, body):
+    email = smtplib.SMTP("smtp.gmail.com", 587)
+    email.ehlo()
+    email.starttls()
+    email.ehlo()
+    email.login(smtpUser, smtpPass)
+    email.sendmail(fromAdd, toAdd, header + "\n\n" + body)
+    email.quit()
 
 def temp_num_matrix_1(num):
 
@@ -582,7 +610,6 @@ sense = SenseHat()
 batch_data = []
 tot_samples = 0
 
-
 #Set the logging file name
 time = datetime.now()
 time = datetime.strftime(time, DATE_FORMAT)
@@ -598,14 +625,14 @@ if DISPLAY:
     print("*****************************************")
     print("*         Sense Hat Logger              *")
     print("*                                       *")
-    print("*           Version: 1.9                *")
+    print("*           Version: 2.0                *")
     print("*****************************************")
     print("\n")
     print("Creating file: "+filename)
     print("Sense Hat Logging Initiated!")
     print("****************\n")
 
-Thread(target=blinking_led).start()
+Thread(target=display_temp).start()
 
 if DELAY > 0:
     sense_data = get_sense_data()
@@ -641,21 +668,14 @@ sense.clear() #clear SenseHat display
 if EMAIL:
     if DISPLAY:
         print ("Sendig email...")
-    email = smtplib.SMTP("smtp.gmail.com", 587)
     timestamp = datetime.now()
     timestamp = datetime.strftime(timestamp, TIME_FORMAT)
     mailsubject= "Sampling process completed!"
     mailbody = "Sense Hat logger process successfully completed at " + timestamp + "\n\n" + \
                "A total of " + str(SAMPLES) + " samples were taken with a frecuency of " + \
                str(DELAY) + " seconds"
-    header = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
-    email.ehlo()
-    email.starttls()
-    email.ehlo()
-    email.login(smtpUser, smtpPass)
-    email.sendmail(fromAdd, toAdd, header + "\n\n" + mailbody)
-    email.quit()
-
+    mailheader = "To: " + toAdd + "\n" + "From: " + fromAdd + "\n" + "Subject: " + mailsubject
+    send_email(mailheader, mailbody)
 
 if DISPLAY:
     print ("*****************")
