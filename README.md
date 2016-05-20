@@ -18,8 +18,7 @@ More info: https://www.raspberrypi.org/learning/getting-started-with-the-sense-h
 
 --- Configuration parameters:
 To control the logger, go to the logging settings section. Adjust the logging parameters accordingly:
-*FILENAME: (text) Name of the CSV file. date and time will be added to allow for several versions
-*WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
+*FILENAME: (text) Name of the CSV file. date and time will be added to allow for several versions*WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
 *DELAY: (integer) Time between samples in seconds
 *SAMPLES: (integer) Number of samples to take
 *DATE_FORMAT: Determines the date format for the CSV file timestamp
