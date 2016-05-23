@@ -22,6 +22,7 @@ To control the logger, go to the logging settings section. Adjust the logging pa
 *WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
 *DELAY: (integer) Time between samples in seconds
 *SAMPLES: (integer) Number of samples to take
+*EMAIL: (True/False) Send an email when the process is complete
 *DATE_FORMAT: Determines the date format for the CSV file timestamp
 *TIME_FORMAT: Determines the time format for the CSV file timestamp
 *DISPLAY: (True/False) is the raspberry connected to a display? If true the progress will be shown in the screen
