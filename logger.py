@@ -106,8 +106,8 @@ def display_temp():
         temp_num_matrix_2(temp_dis[1])
 
         if ECHO:
-            display(temp_dis)
-            display(sense_data)
+            print(temp_dis)
+            print(sense_data)
 
         sleep(DELAY)
     
