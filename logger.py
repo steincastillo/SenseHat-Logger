@@ -20,8 +20,8 @@ import smtplib
 ########################
 
 #Set sampling universe and rate
-DELAY = 60       #Delay between samples in seconds
-SAMPLES = 220    #Number of samples to take
+DELAY = 2       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -35,7 +35,7 @@ MAG = False
 GYRO = False
 
 #Set other logging parameters
-FILENAME = "deck"
+FILENAME = "test"
 WRITE_FREQUENCY = 5
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
@@ -106,8 +106,7 @@ def display_temp():
         temp_num_matrix_2(temp_dis[1])
 
         if ECHO:
-            print(temp_dis)
-            print(sense_data)
+            print("\t".join(str(value) for value in sense_data))
 
         sleep(DELAY)
     
