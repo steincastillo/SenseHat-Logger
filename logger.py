@@ -38,6 +38,7 @@ GYRO = False
 FILENAME = "deck"
 WRITE_FREQUENCY = 5
 DISPLAY = True  #Raspberry pi connected to a display?
+ECHO = True  #Display values as they are measured?
 EMAIL = True #Send email when the process is complete?
 
 #set emailing parameters
@@ -103,6 +104,11 @@ def display_temp():
 
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
+
+        if ECHO:
+            display(temp_dis)
+            display(sense_data)
+
         sleep(DELAY)
     
     sense.clear()
@@ -639,7 +645,6 @@ if DELAY > 0:
     Thread(target=timed_log).start()
 
 while tot_samples < SAMPLES:
-    #print("reading sensors")
     sense_data = get_sense_data()
     if DELAY == 0:
         log_data()
