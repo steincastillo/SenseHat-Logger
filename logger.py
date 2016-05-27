@@ -21,7 +21,7 @@ import smtplib
 
 #Set sampling universe and rate
 DELAY = 2       #Delay between samples in seconds
-SAMPLES = 10    #Number of samples to take
+SAMPLES = 20    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -36,10 +36,10 @@ GYRO = False
 
 #Set other logging parameters
 FILENAME = "test"
-WRITE_FREQUENCY = 5
+WRITE_FREQUENCY = 10
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
-EMAIL = True #Send email when the process is complete?
+EMAIL = False #Send email when the process is complete?
 
 #set emailing parameters
 smtpUser = "raspberrymonitor641@gmail.com"  #email account
@@ -635,7 +635,8 @@ if DISPLAY:
     print("\n")
     print("Creating file: "+filename)
     print("Sense Hat Logging Initiated!")
-    print("****************\n")
+    print("****************************\n")
+    
 
 Thread(target=display_temp).start()
 
