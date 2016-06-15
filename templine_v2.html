@@ -1,0 +1,62 @@
+<script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.10/eon.js"></script>
+<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.10/eon.css" />
+<div id="chart"></div>
+<script type="text/javascript">
+var __eon_pubnub = PUBNUB.init({
+  subscribe_key: "sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f"
+});
+var __eon_cols = ["Austin"]; 
+var __eon_labels = {"Austin":"Temperature"}; 
+chart = eon.chart({
+  pubnub: __eon_pubnub,
+  channel: "test-channel-0.1486765417797249",
+  history: false,
+  flow: true,
+  rate: 2000,
+  limit: 5,
+  generate: {
+    bindto: "#chart",
+    data: {
+      colors: {"New York":"#E54028","San Francisco":"#F18D05","Portland":"#113F8C","Temperature":"#D70060","Austin":"#1f77b4"},
+      type: "spline"
+    },
+    transition: {
+      duration: 500
+    },
+    axis: {
+      x: {
+        label: "Time"
+      },
+      y: {
+        label: "Celsius"
+      }
+    },
+    grid: {
+      x: {
+        show: true 
+      },
+      y: {
+        show: true 
+      }
+    },
+    tooltip: {
+     show: true
+    },
+    point: {
+      show: true
+    }
+  },
+  transform: function(message) {
+    var message = eon.c.flatten(message.eon);
+    var o = {};
+    for(index in message) {
+      if(__eon_cols.indexOf(index) > -1){
+        o[__eon_labels[index] || index] = message[index];
+      }
+    }
+    return {
+      eon: o
+    };
+  }
+});
+</script>
