@@ -24,8 +24,8 @@ import time
 ########################
 
 #Set sampling universe and rate
-DELAY = 2       #Delay between samples in seconds
-SAMPLES = 5    #Number of samples to take
+DELAY = 60       #Delay between samples in seconds
+SAMPLES = 60    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -117,26 +117,14 @@ def display_temp():
 
         if ECHO:
             print("\t".join(str(value) for value in sense_data))
-            #pubmess = ["Temp:", sense_data[2]]
-            #pubnub.publish(channel = PUBCHANNEL, message = pubmess)
 
-            time_stamp = datetime.now()
-            time_stamp = datetime.strftime(time_stamp, TIME_FORMAT)
-    
-
+            #publish temperature readings in PUBNUB
             pubnub.publish(
                 channel = "tempeon",
                 message =
                 {"eon":
-                {"Temp":sense_data[2]}}
+                {"Temp_H":round(temp1,1), "Temp_P":round(temp2,1), "Temp_R":temp}}
                 )
-
-##            pubnub.publish("tempeon", 
-##                           message: 
-##                               ["x"time_stamp],
-##                               ["temperature_celsius", sense_data[2]]
-##                               
-##                           })
 
         sleep(DELAY)
     
