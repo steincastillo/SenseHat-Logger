@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.11/eon.js"></script>
+    <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.11/eon.css" />
+  
+    <style>
+      #header {
+        background-color:black;
+        color:white;
+        text-align:center;
+        padding:5px;
+      }
+      #footer {
+        background-color:black;
+        color:white;
+        clear:both;
+        text-align:center;
+        padding:5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="header"> <h1>SenseHat Logger</h1></div>
+    <h1 align="left">Temperature Readings V5</h1>
+    <div id="chart"></div>
+
+    <script>
+      var pubnub = PUBNUB.init({
+        publish_key: 'pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7',
+        subscribe_key: 'sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f'
+      });
+
+      var channel = "tempeon";
+
+      eon.chart({
+        pubnub: pubnub,
+        history: true,
+        channel: channel,
+        flow: {
+          duration: 100
+        },
+        limit: 15,
+        generate: {
+          bindto: '#chart',
+          data: {
+            type: "spline",
+            labels: false
+          },
+          grid: {
+            x: {
+              show: true 
+            },
+            y: {
+              show: true
+            }
+          },
+          axis:{
+            y: {
+              label: {text: "Celsius", position: "outer-middle"}
+            }
+          },
+        }
+      });
+    </script>
+
+    <hr>
+    
+    <div id="footer">Copyright @Stein Castillo</div>
+
+
+  </body>
+</html>
