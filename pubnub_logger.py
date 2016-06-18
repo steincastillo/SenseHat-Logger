@@ -1,5 +1,5 @@
 #Sense Hat Logger
-#Program: logger.py
+#Program: pubnub_logger.py
 #Version 2.0
 #Author: Stein Castillo
 #Date: Mar 19 2016
@@ -16,8 +16,6 @@ from pubnub import Pubnub
 import os
 import smtplib
 import sys
-import time
-
 
 ########################
 ### Logging Settings ###
@@ -66,10 +64,11 @@ DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:2
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
 
 #Pubnub channel settings
-pubnub = Pubnub(publish_key = "pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7",
-			subscribe_key = "sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f")
-PUBCHANNEL = "sensehat_logger"
-
+pubnub = Pubnub(
+            publish_key   = "pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7",
+			subscribe_key = "sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f"
+                )
+PUBCHANNEL = "tempeon"
 
 led_level = 255
 
@@ -119,15 +118,15 @@ def display_temp():
             print("\t".join(str(value) for value in sense_data))
 
             #publish temperature readings in PUBNUB
-            pubnub.publish(
-                channel = "tempeon",
+            pubnub.publish
+                (
+                channel = PUBCHANNEL,
                 message =
                 {"eon":
                 {"Temp_H":round(temp1,1), "Temp_P":round(temp2,1), "Temp_R":temp}}
                 )
 
         sleep(DELAY)
-    
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -156,7 +155,6 @@ def file_setup(filename):
     with open(filename, "w") as f:
         f.write(",".join(str(value) for value in header) + "\n")
         
-
 #This function reads the SenseHat sensors
 def get_sense_data():
 
@@ -676,7 +674,6 @@ while tot_samples < SAMPLES:
             #calculate sampling progress
             progress = int((tot_samples/SAMPLES)*100)
             progress = str(progress)
-            #sense.show_letter(progress[0])
             print("Sampling progress: "+progress+"%")
             print ("\n")
         with open(filename, "a") as f:
@@ -706,5 +703,3 @@ if DISPLAY:
     print ("Created file: "+filename)
     print ("Total samples: " + str(SAMPLES))
     print ("*****************")
-
-    pubnub.publish(channel = PUBCHANNEL, message = "Process Complete")
