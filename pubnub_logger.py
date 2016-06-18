@@ -24,8 +24,8 @@ import time
 ########################
 
 #Set sampling universe and rate
-DELAY = 60       #Delay between samples in seconds
-SAMPLES = 180    #Number of samples to take
+DELAY = 180       #Delay between samples in seconds
+SAMPLES = 300    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -43,7 +43,7 @@ FILENAME = "deck"
 WRITE_FREQUENCY = 10
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
-EMAIL = False #Send email when the process is complete?
+EMAIL = True #Send email when the process is complete?
 
 #set emailing parameters
 smtpUser = "raspberrymonitor641@gmail.com"  #email account
