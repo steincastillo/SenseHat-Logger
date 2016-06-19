@@ -23,7 +23,7 @@ import sys
 
 #Set sampling universe and rate
 DELAY = 180       #Delay between samples in seconds
-SAMPLES = 300    #Number of samples to take
+SAMPLES = 150    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -118,8 +118,7 @@ def display_temp():
             print("\t".join(str(value) for value in sense_data))
 
             #publish temperature readings in PUBNUB
-            pubnub.publish
-                (
+            pubnub.publish(
                 channel = PUBCHANNEL,
                 message =
                 {"eon":
