@@ -19,18 +19,17 @@ More info: https://www.raspberrypi.org/learning/getting-started-with-the-sense-h
 --- Configuration parameters:
 To control the logger, go to the LOGGING SETTINGS section. Adjust the parameters accordingly:
 
-DELAY: (integer) Time between samples in seconds
-SAMPLES: (integer) Number of samples to take
-
-TEMP_H: (True/False) Log temperature from humidity sensor?
-TEMP_P: (True/False) Log temperature from pressure sensor?
-TEMP_R: (True/False) Log "real" temperature corrected for CPU heat effect
-HUMIDITY: (True/False) Log humidty?
-PRESSURE: (True/False) Log barometric pressure?
-ORIENTATION: (True/False) Log orientation data?
-ACCELERATION: (True/False) Log acceleration data?
-MAG: (True/False) Log magnetometer data?
-GYRO: (True/False) Log gyroscope data?
+* DELAY: (integer) Time between samples in seconds
+* SAMPLES: (integer) Number of samples to take
+* TEMP_H: (True/False) Log temperature from humidity sensor?
+* TEMP_P: (True/False) Log temperature from pressure sensor?
+* TEMP_R: (True/False) Log "real" temperature corrected for CPU heat effect
+* HUMIDITY: (True/False) Log humidty?
+* PRESSURE: (True/False) Log barometric pressure?
+* ORIENTATION: (True/False) Log orientation data?
+* ACCELERATION: (True/False) Log acceleration data?
+* MAG: (True/False) Log magnetometer data?
+* GYRO: (True/False) Log gyroscope data?
 
 FILENAME: (text) Name of the CSV file. date and time will be added automatically
 WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
