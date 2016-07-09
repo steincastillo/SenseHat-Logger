@@ -122,7 +122,7 @@ def display_temp():
                 channel = PUBCHANNEL,
                 message =
                 {"eon":
-                {"Temp_H":round(temp1,1), "Temp_P":round(temp2,1), "Temp_R":temp}}
+                {"Temp_R":temp}}
                 )
 
         sleep(DELAY)
