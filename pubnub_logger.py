@@ -22,8 +22,8 @@ import sys
 ########################
 
 #Set sampling universe and rate
-DELAY = 120       #Delay between samples in seconds
-SAMPLES = 60    #Number of samples to take
+DELAY = 2       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -37,7 +37,7 @@ MAG = False
 GYRO = False
 
 #Set other logging parameters
-FILENAME = "bedroom"
+FILENAME = "test"
 WRITE_FREQUENCY = 10
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
@@ -237,6 +237,21 @@ def send_email(header, body):
     email.login(smtpUser, smtpPass)
     email.sendmail(fromAdd, toAdd, header + "\n\n" + body)
     email.quit()
+
+def disp_logo(time):
+    image = [
+    E,E,E,R,R,R,E,E,
+    E,E,E,R,E,R,E,E,
+    E,E,E,R,E,E,E,E,
+    E,E,R,R,R,E,E,E,
+    E,E,R,R,R,E,E,E,
+    E,E,E,R,E,E,E,E,
+    E,R,E,R,E,E,E,E,
+    E,R,R,R,E,E,E,E
+    ]
+    sense.set_pixels(image)
+    sleep(time)
+    sense.clear()
 
 def temp_num_matrix_1(num):
 
@@ -629,6 +644,9 @@ def temp_num_matrix_2(num):
 sense = SenseHat()
 batch_data = []
 tot_samples = 0
+
+#display initia logo for 3 seconds
+disp_logo(3)
 
 #Set the logging file name
 time = datetime.now()
