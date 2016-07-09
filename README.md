@@ -1,9 +1,5 @@
-SenseHat-Logger  
-Raspberry Pi Sense Hat logger  
-Program: logger.py  
-Version: 2.0  
-Author: Stein Castillo  
-
+<h1>Raspberry Pi Sense Hat logger</h1>
+ 
 **Short Description:**
 Read the sensors from the Sense Hat and log the results in a CSV file
 
