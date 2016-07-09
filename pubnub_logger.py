@@ -23,7 +23,7 @@ import sys
 
 #Set sampling universe and rate
 DELAY = 2       #Delay between samples in seconds
-SAMPLES = 10    #Number of samples to take
+SAMPLES = 15    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -122,7 +122,7 @@ def display_temp():
                 channel = PUBCHANNEL,
                 message =
                 {"eon":
-                {"Temp_R":temp}}
+                {"Temp":temp}}
                 )
 
         sleep(DELAY)
