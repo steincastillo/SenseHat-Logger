@@ -68,7 +68,8 @@ pubnub = Pubnub(
             publish_key   = "pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7",
 			subscribe_key = "sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f"
                 )
-PUBCHANNEL = "tempeon"
+TEMPCHANNEL = "tempeon"
+HUMCHANNEL = "humeon"
 
 led_level = 255
 
@@ -114,16 +115,26 @@ def display_temp():
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
 
+        hum = round(sense.get_humidity(),1)
+
         if ECHO:
             print("\t".join(str(value) for value in sense_data))
 
             #publish temperature readings in PUBNUB
             pubnub.publish(
-                channel = PUBCHANNEL,
+                channel = TEMPCHANNEL,
                 message =
                 {"eon":
                 {"Temp":temp}}
                 )
+            #publish Pressure readings in PUBNUB
+            pubnub.publish(
+                channel = HUMCHANNEL,
+                message =
+                {"eon":
+                {"Humidity":hum}}
+                )
+
 
         sleep(DELAY)
     sense.clear()
