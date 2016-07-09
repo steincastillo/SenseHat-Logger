@@ -41,7 +41,7 @@ FILENAME = "test"
 WRITE_FREQUENCY = 10
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
-EMAIL = True #Send email when the process is complete?
+EMAIL = False #Send email when the process is complete?
 
 #set emailing parameters
 smtpUser = "raspberrymonitor641@gmail.com"  #email account
