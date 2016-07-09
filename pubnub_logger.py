@@ -1,5 +1,5 @@
 #Sense Hat Logger
-#Program: logger.py
+#Program: pubnub_logger.py
 #Version 2.0
 #Author: Stein Castillo
 #Date: Mar 19 2016
@@ -12,16 +12,18 @@ from sense_hat import SenseHat
 from datetime import datetime
 from time import sleep
 from threading import Thread
+from pubnub import Pubnub
 import os
 import smtplib
+import sys
 
 ########################
 ### Logging Settings ###
 ########################
 
 #Set sampling universe and rate
-DELAY = 120       #Delay between samples in seconds
-SAMPLES = 180    #Number of samples to take
+DELAY = 2       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -35,7 +37,7 @@ MAG = False
 GYRO = False
 
 #Set other logging parameters
-FILENAME = "deck"
+FILENAME = "test"
 WRITE_FREQUENCY = 10
 DISPLAY = True  #Raspberry pi connected to a display?
 ECHO = True  #Display values as they are measured?
@@ -60,6 +62,13 @@ E = [0, 0, 0]       #empty/black
 #Set date and time formats
 DATE_FORMAT = "%Y"+"-"+"%m"+"-"+"%d"+"_"+"%H"+":"+"%M"+":"+"%S" #2016-03-16_17:23:15
 TIME_FORMAT = "%H"+":"+"%M"+":"+"%S" #22:11:30
+
+#Pubnub channel settings
+pubnub = Pubnub(
+            publish_key   = "pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7",
+			subscribe_key = "sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f"
+                )
+PUBCHANNEL = "tempeon"
 
 led_level = 255
 
@@ -108,8 +117,15 @@ def display_temp():
         if ECHO:
             print("\t".join(str(value) for value in sense_data))
 
+            #publish temperature readings in PUBNUB
+            pubnub.publish(
+                channel = PUBCHANNEL,
+                message =
+                {"eon":
+                {"Temp_R":temp}}
+                )
+
         sleep(DELAY)
-    
     sense.clear()
 
 #This functions sets the .CSV file header
@@ -138,7 +154,6 @@ def file_setup(filename):
     with open(filename, "w") as f:
         f.write(",".join(str(value) for value in header) + "\n")
         
-
 #This function reads the SenseHat sensors
 def get_sense_data():
 
@@ -223,8 +238,24 @@ def send_email(header, body):
     email.sendmail(fromAdd, toAdd, header + "\n\n" + body)
     email.quit()
 
+def disp_logo(time):
+    image = [
+    E,E,E,R,R,R,E,E,
+    E,E,E,R,E,R,E,E,
+    E,E,E,R,E,E,E,E,
+    E,E,R,R,R,E,E,E,
+    E,E,R,R,R,E,E,E,
+    E,E,E,R,E,E,E,E,
+    E,R,E,R,E,E,E,E,
+    E,R,R,R,E,E,E,E
+    ]
+    sense.set_pixels(image)
+    sleep(time)
+    sense.clear()
+
 def temp_num_matrix_1(num):
 
+    
   if num == '0':
         # number 0_top_left - TEMPERATURE
     sense.set_pixel(0, 0, led_level, 0, 0)   
@@ -615,6 +646,9 @@ sense = SenseHat()
 batch_data = []
 tot_samples = 0
 
+#display initia logo for 3 seconds
+disp_logo(3)
+
 #Set the logging file name
 time = datetime.now()
 time = datetime.strftime(time, DATE_FORMAT)
@@ -658,7 +692,6 @@ while tot_samples < SAMPLES:
             #calculate sampling progress
             progress = int((tot_samples/SAMPLES)*100)
             progress = str(progress)
-            #sense.show_letter(progress[0])
             print("Sampling progress: "+progress+"%")
             print ("\n")
         with open(filename, "a") as f:

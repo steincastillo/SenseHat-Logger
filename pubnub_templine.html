@@ -1,0 +1,56 @@
+<html>
+  <head>
+
+    <link rel="stylesheet" type="text/css" href="../bower_components/c3/c3.min.css">
+    <script src="../bower_components/pubnub/web/pubnub.min.js"></script>
+    <script src="../bower_components/d3/d3.min.js"></script>
+    <script src="../bower_components/c3/c3.min.js"></script>
+
+    <script src="../pubnub-c3.js"></script>
+
+    <style>
+      .c3-region-1 {
+        fill: #dd3333;
+        fill-opacity: 0.8
+      }
+    </style>
+    
+
+  </head>
+  <body>
+    <div id="chart"></div>
+    <h1 align="center">Temperature Readings</h1>
+    <script>
+
+    var pubnub = PUBNUB.init({
+        publish_key: 'pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7',
+        subscribe_key: 'sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f'
+      });
+
+      eon.chart({
+  pubnub: pubnub,
+  channel: "tempeon",
+  history: true,
+  flow: true,
+  generate: {
+    bindto: '#chart',
+    data: {
+      x: 'x',
+      labels: false
+    },
+    axis : {
+      x : {
+        type : 'timeseries',
+        tick: {
+          format: '%H:%M:%S'
+        }
+      }
+    }
+  }
+});
+    </script>
+    
+    
+    
+  </body>
+</html>
