@@ -31,17 +31,17 @@ To control the logger, go to the LOGGING SETTINGS section. Adjust the parameters
 * MAG: (True/False) Log magnetometer data?
 * GYRO: (True/False) Log gyroscope data?
 
-FILENAME: (text) Name of the CSV file. date and time will be added automatically
-WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
-DISPLAY: (True/False) Raspberry connected to a display? If true the progress will be shown in the screen
-ECHO: (True/False) Display values as they are measured?
-EMAIL: (True/False) Send an email when the process is complete
+* FILENAME: (text) Name of the CSV file. date and time will be added automatically
+* WRITE_FREQUENCY: Determines the number of samples to take before committing the data to the logging file
+* DISPLAY: (True/False) Raspberry connected to a display? If true the progress will be shown in the screen
+* ECHO: (True/False) Display values as they are measured?
+* EMAIL: (True/False) Send an email when the process is complete
 
-smtpUser = "email@domain"   Origin email account
-smtpPass = "password"       Origin email password
-toAdd = "email@domain"      Recepient email account
+* smtpUser = "email@domain"   Origin email account
+* smtpPass = "password"       Origin email password
+* toAdd = "email@domain"      Recepient email account
 
-DATE_FORMAT: Determines the date format for the CSV file timestamp
-TIME_FORMAT: Determines the time format for the CSV file timestamp
+* DATE_FORMAT: Determines the date format for the CSV file timestamp
+* TIME_FORMAT: Determines the time format for the CSV file timestamp
 
 
