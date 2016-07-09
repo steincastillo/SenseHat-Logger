@@ -1,0 +1,118 @@
+<!-- Templine               -->
+<!-- Program: templine.html -->
+<!-- Version: 5.0           -->
+<!-- Author: Stein Castillo -->
+<!-- Date: June 16 2016     -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="keywords" contents="SenseHat, Raspberry pi, pubnub">
+    <meta name="description" contents="Sensehat Logger realtime dashboard">
+    <meta name="author" contents="Stein Castillo">
+    <script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.11/eon.js"></script>
+    <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.11/eon.css"/>
+  
+    <style>
+      #header {
+        background-color:black;
+        color:white;
+        text-align:center;
+        padding:5px;
+      }
+      #footer {
+        background-color:lightgrey;
+        color:black;
+        clear:both;
+        text-align:left;
+        padding:5px;
+      }
+      #chart {
+        border: 1px solid black;
+        padding:5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="header"> <h1>SenseHat Logger</h1></div>
+    <div id="temp_chart"></div>
+    <div id="hum_chart"></div>
+
+    <script>
+      var pubnub = PUBNUB.init({
+        publish_key: 'pub-c-4c366fe0-5497-4f20-af8b-eb46de436dd7',
+        subscribe_key: 'sub-c-8b69ef34-30ce-11e6-b700-0619f8945a4f'
+      });
+
+      var temp = "tempeon";
+      var hum ="humeon"
+
+<!-- Plot temperature readings (line format)
+
+      eon.chart({
+        pubnub: pubnub,
+        history: true,
+        channel: temp,
+        flow: {
+          duration: 100
+        },
+        limit: 20,
+        generate: {
+          bindto: '#temp_chart',
+          data: {
+            type: "spline",
+            labels: false
+          },
+          grid: {
+            x: {
+              show: true 
+            },
+            y: {
+              show: true
+            }
+          },
+          axis:{
+            y: {
+              label: {text: "Celsius", position: "outer-middle"}
+            }
+          },
+        }
+      });
+
+
+<!-- Plot humidity readings (gauge format)
+
+eon.chart({
+        pubnub: pubnub,
+        history: true,
+        channel: hum,
+        flow: false,
+        limit: 0,
+        generate: {
+          bindto: '#hum_chart',
+          data: {
+            type: "gauge",
+          },
+          gauge: {
+            min: 0,
+            max: 100
+          },
+          color: {
+            pattern: ['#FF0000', '#F6C600', '#60B044'],
+            threshold: {
+              values: [30, 60, 90]
+          }
+        }
+      }});
+
+    </script>
+
+    <br>
+    <hr>
+    
+    <div id="footer"><i>Copyright @Stein Castillo</i></div>
+
+
+  </body>
+</html>
