@@ -255,6 +255,7 @@ def disp_logo(time):
 
 def temp_num_matrix_1(num):
 
+    
   if num == '0':
         # number 0_top_left - TEMPERATURE
     sense.set_pixel(0, 0, led_level, 0, 0)   
