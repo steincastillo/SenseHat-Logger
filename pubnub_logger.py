@@ -22,8 +22,8 @@ import sys
 ########################
 
 #Set sampling universe and rate
-DELAY = 2       #Delay between samples in seconds
-SAMPLES = 15    #Number of samples to take
+DELAY = 60       #Delay between samples in seconds
+SAMPLES = 60    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
