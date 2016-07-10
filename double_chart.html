@@ -1,8 +1,8 @@
-<!-- Templine               -->
-<!-- Program: templine.html -->
-<!-- Version: 5.0           -->
-<!-- Author: Stein Castillo -->
-<!-- Date: June 16 2016     -->
+<!-- double chart               -->
+<!-- Program: double_chart.html -->
+<!-- Version: 5.0               -->
+<!-- Author: Stein Castillo     -->
+<!-- Date: July 09 2016         -->
 
 <!DOCTYPE html>
 <html>
@@ -35,9 +35,19 @@
   </head>
 
   <body>
-    <div id="header"> <h1>SenseHat Logger</h1></div>
-    <div id="temp_chart"></div>
-    <div id="hum_chart"></div>
+
+    <div id="header"><h1>SenseHat Logger</h1></div>
+    <br>
+    <div style="widht: 100%; overflow: hidden;">
+      <div id="temp_chart" title="Temperature" style="width: 700px; float: left;">Left</div>
+      <div id="hum_chart" title="Humidity" style="margin-left: 720px;"> Right</div>
+    </div>
+
+    <!-- <div id="header"> <h1>SenseHat Logger</h1></div>
+    <br>
+    <div id="temp_chart" title="Temperature"></div>
+    <hr>
+    <div id="hum_chart" title="Humidity"></div> -->
 
     <script>
       var pubnub = PUBNUB.init({
