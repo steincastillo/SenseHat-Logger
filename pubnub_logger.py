@@ -113,9 +113,11 @@ def display_temp():
         temp_int = int(temp)
         temp_dis = str(temp_int)
 
+
         temp_num_matrix_1(temp_dis[0])
         temp_num_matrix_2(temp_dis[1])
 
+        #read sensor values to publish in PUBNUB
         hum = round(sense.get_humidity(),1)
         press = round(sense.get_pressure(),1)
 
@@ -137,7 +139,7 @@ def display_temp():
                 {"Humidity":hum}}
                 )
 
-            #publish data for freeboard
+            #publish data for freeboard dashboard
             pubnub.publish(
                 channel = FREEBOARD,
                 message =
@@ -274,7 +276,6 @@ def disp_logo(time):
     sense.clear()
 
 def temp_num_matrix_1(num):
-
     
   if num == '0':
         # number 0_top_left - TEMPERATURE
@@ -667,7 +668,7 @@ batch_data = []
 tot_samples = 0
 
 #display initia logo for 3 seconds
-disp_logo(3)
+disp_logo(2)
 
 #Set the logging file name
 time = datetime.now()
