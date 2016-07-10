@@ -22,8 +22,8 @@ import sys
 ########################
 
 #Set sampling universe and rate
-DELAY = 60       #Delay between samples in seconds
-SAMPLES = 60    #Number of samples to take
+DELAY = 2       #Delay between samples in seconds
+SAMPLES = 10    #Number of samples to take
 
 #Set sensors to read/log
 TEMP_H = True   #Temperature from humidity sensor
@@ -117,6 +117,7 @@ def display_temp():
         temp_num_matrix_2(temp_dis[1])
 
         hum = round(sense.get_humidity(),1)
+        press = round(sense.get_pressure(),1)
 
         if ECHO:
             print("\t".join(str(value) for value in sense_data))
@@ -140,8 +141,7 @@ def display_temp():
             pubnub.publish(
                 channel = FREEBOARD,
                 message =
-                {
-                {"Temp": temp, "Humidity":hum}}
+                {"temp": temp, "humidity": hum, "pressure": press}
                 )
 
 
