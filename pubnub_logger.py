@@ -70,6 +70,7 @@ pubnub = Pubnub(
                 )
 TEMPCHANNEL = "tempeon"
 HUMCHANNEL = "humeon"
+FREEBOARD = "freebrd"
 
 led_level = 255
 
@@ -133,6 +134,14 @@ def display_temp():
                 message =
                 {"eon":
                 {"Humidity":hum}}
+                )
+
+            #publish data for freeboard
+            pubnub.publish(
+                channel = FREEBOARD,
+                message =
+                {
+                {"Temp": temp, "Humidity":hum}}
                 )
 
 
